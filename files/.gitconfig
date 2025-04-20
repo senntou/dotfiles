@@ -1,0 +1,6 @@
+[user]
+  email = 82887636+senntou@users.noreply.github.com
+  name = senntou
+[core]
+	editor = nvim
+	ignorecase = false
