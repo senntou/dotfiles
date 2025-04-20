@@ -3,3 +3,6 @@ bash_aliases:
 
 gitconfig:
 	cp -i files/.gitconfig ~/.gitconfig
+
+latexmk:
+	cp -i files/.latexmkrc ~/.latexmkrc
