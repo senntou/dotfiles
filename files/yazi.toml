@@ -7,3 +7,19 @@ edit = [
 	{ run = 'nvim "$@"', block = true, for = "unix" },
 	{ run = "%EDITOR% %*",  block = true, for = "windows" },
 ]
+imgcat = [
+  { run = 'wezterm imgcat --height 90% --hold "$@"', block = true, for = "unix" },
+]
+
+[open]
+prepend_rules = [
+	{ name = "*.png", use = "imgcat" },
+	{ name = "*.jpg", use = "imgcat" },
+  { name = "*.jpeg", use = "imgcat" },
+  { name = "*.gif", use = "imgcat" },
+  { name = "*.webp", use = "imgcat" },
+  { name = "*.svg", use = "imgcat" },
+  { name = "*.pdf", use = "imgcat" },
+  { name = "*.tif", use = "imgcat" },
+  { name = "*.tiff", use = "imgcat" },
+]
