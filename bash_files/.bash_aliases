@@ -10,6 +10,19 @@ function y() {
 	rm -f -- "$tmp"
 }
 
+svgcat() {
+  if [ -z "$1" ]; then
+    echo "Usage: svgcat <svg_filepath> [wezterm imgcat options]"
+    return 1
+  fi
+  local svg_filepath="$1"
+  if [ ! -f "$svg_filepath" ]; then
+    echo "Error: File not found: $svg_filepath"
+    return 1
+  fi
+  magick -background None "$svg_filepath" png:- | wezterm imgcat "${@:2}"
+}
+
 # windows
 # alias start='wsl-open'
 # alias cdd='cd /mnt/c/users/wataru/'

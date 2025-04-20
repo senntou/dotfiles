@@ -10,6 +10,9 @@ edit = [
 imgcat = [
   { run = 'wezterm imgcat --height 90% --hold "$@"', block = true, for = "unix" },
 ]
+svgcat = [
+  { run = 'svgcat --height 90% --hold "$@"', block = true, for = "unix" },
+]
 
 [open]
 prepend_rules = [
@@ -18,7 +21,7 @@ prepend_rules = [
   { name = "*.jpeg", use = "imgcat" },
   { name = "*.gif", use = "imgcat" },
   { name = "*.webp", use = "imgcat" },
-  { name = "*.svg", use = "imgcat" },
+  { name = "*.svg", use = "svgcat" },
   { name = "*.pdf", use = "imgcat" },
   { name = "*.tif", use = "imgcat" },
   { name = "*.tiff", use = "imgcat" },
