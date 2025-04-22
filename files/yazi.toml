@@ -12,7 +12,7 @@ imgcat = [
   { run = 'wezterm imgcat --height 90% --hold "$@"', block = true, for = "unix" },
 ]
 svgcat = [
-  { run = 'svgcat --height 90% --hold "$@"', block = true, for = "unix" },
+  { run = 'rsvg-convert -d 180 -p 180 "$@" | wezterm imgcat --height 90% --hold', block = true, for = "unix" },
 ]
 
 [open]
