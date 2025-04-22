@@ -20,3 +20,8 @@ latexmk:
 yazi: config-setup
 	mkdir -p ~/.config/yazi
 	cp -i files/yazi.toml ~/.config/yazi/yazi.toml
+
+
+latexindent:
+	@echo "please copy files/defaultSettings.latexindent.yaml to the following location:"
+	@bash -c 'latexindent -vv'
