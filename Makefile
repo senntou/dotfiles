@@ -1,3 +1,5 @@
+default:
+	@echo "Please run 'make <target>' to set up your environment."
 
 config-setup:
 	mkdir -p ~/.config
@@ -20,6 +22,7 @@ latexmk:
 yazi: config-setup
 	mkdir -p ~/.config/yazi
 	cp -i files/yazi.toml ~/.config/yazi/yazi.toml
+	yazi --clear-cache
 
 
 latexindent:
