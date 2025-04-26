@@ -16,15 +16,19 @@ bash_aliases:
 gitconfig:
 	cp -i files/.gitconfig ~/.gitconfig
 
-latexmk:
-	cp -i files/.latexmkrc ~/.latexmkrc
+tmux:
+	mkdir -p ~/.config/tmux
+	cp -i files/tmux.conf ~/.config/tmux/tmux.conf
 
 yazi: config-setup
 	mkdir -p ~/.config/yazi
 	cp -i files/yazi.toml ~/.config/yazi/yazi.toml
 	yazi --clear-cache
 
+latexmk:
+	cp -i files/.latexmkrc ~/.latexmkrc
 
 latexindent:
 	@echo "please copy files/defaultSettings.latexindent.yaml to the following location:"
 	@bash -c 'latexindent -vv'
+

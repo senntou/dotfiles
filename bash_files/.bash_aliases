@@ -23,6 +23,8 @@ svgcat() {
   magick -background None "$svg_filepath" png:- | wezterm imgcat "${@:2}"
 }
 
+alias t="tmux new-session -A -s default"
+
 # windows
 # alias start='wsl-open'
 # alias cdd='cd /mnt/c/users/wataru/'
