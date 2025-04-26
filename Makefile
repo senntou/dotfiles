@@ -22,7 +22,9 @@ tmux:
 
 yazi: config-setup
 	mkdir -p ~/.config/yazi
+	mkdir -p ~/.config/yazi-img
 	cp -i files/yazi.toml ~/.config/yazi/yazi.toml
+	cp -i files/yazi-img.toml ~/.config/yazi-img/yazi.toml
 	yazi --clear-cache
 
 latexmk:

@@ -1,0 +1,33 @@
+[manager]
+sort_by = "natural"
+show_hidden = true
+ratio = [0, 1, 4]
+
+[preview]
+max_width = 1000
+max_height = 1000
+
+[opener]
+edit = [
+	{ run = 'nvim "$@"', block = true, for = "unix" },
+	{ run = "%EDITOR% %*",  block = true, for = "windows" },
+]
+imgcat = [
+  { run = 'wezterm imgcat --height 90% --hold "$@"', block = true, for = "unix" },
+]
+svgcat = [
+  { run = 'rsvg-convert -d 180 -p 180 "$@" | wezterm imgcat --height 90% --hold', block = true, for = "unix" },
+]
+
+[open]
+prepend_rules = [
+	{ name = "*.png", use = "imgcat" },
+	{ name = "*.jpg", use = "imgcat" },
+  { name = "*.jpeg", use = "imgcat" },
+  { name = "*.gif", use = "imgcat" },
+  { name = "*.webp", use = "imgcat" },
+  { name = "*.svg", use = "svgcat" },
+  { name = "*.pdf", use = "imgcat" },
+  { name = "*.tif", use = "imgcat" },
+  { name = "*.tiff", use = "imgcat" },
+]

@@ -9,6 +9,7 @@ function y() {
 	fi
 	rm -f -- "$tmp"
 }
+alias yi='env "YAZI_CONFIG_HOME=~/.config/yazi-img" yazi'
 
 svgcat() {
   if [ -z "$1" ]; then
