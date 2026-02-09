@@ -13,6 +13,15 @@ bash_aliases:
 	@echo "fi"
 	@echo "═════════════════════════════════════════════════════════════"
 
+bash_aliases_hlab:
+	cp -i bash_files/.bash_aliases_hlab ~/.bash_aliases
+	@echo "\nIf you haven't already, add the following to your ~/.bashrc:"
+	@echo "═════════════════════════════════════════════════════════════"
+	@echo "if [ -f ~/.bash_aliases ]; then"
+	@echo "    . ~/.bash_aliases"
+	@echo "fi"
+	@echo "═════════════════════════════════════════════════════════════"
+
 gitconfig:
 	cp -i files/.gitconfig ~/.gitconfig
 
