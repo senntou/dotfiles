@@ -5,6 +5,8 @@ alias b='btm -b'
 alias gpu='nvidia-smi'
 alias py='python3'
 alias mpt='conda activate mpt'
+alias size='du -sh ./*'
+alias ssize='du -sh ./* | sort -hr'
 
 function nvim() {
   export XDG_CACHE_HOME=/tmp/nvim/cache
@@ -16,8 +18,6 @@ function nvim() {
 alias n='nvim'
 alias nvim-yazi='NVIM_APPNAME=nvim-yazi nvim'
 
-alias size='du -sh ./*'
-alias ssize='du -sh ./* | sort -hr'
 alias cdd='cd /Dataset/Kurume_Dataset/kanegae/'
 
 function copy() {

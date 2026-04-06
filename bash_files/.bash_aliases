@@ -1,6 +1,11 @@
 alias lg='lazygit'
 alias l='ls -l'
 alias n='nvim'
+alias py='python3'
+alias b='btm -b'
+alias size='du -sh ./*'
+alias ssize='du -sh ./* | sort -hr'
+
 function y() {
 	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
 	yazi "$@" --cwd-file="$tmp"
