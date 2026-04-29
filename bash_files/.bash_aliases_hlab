@@ -7,6 +7,7 @@ alias py='python3'
 alias mpt='conda activate mpt'
 alias size='du -sh ./*'
 alias ssize='du -sh ./* | sort -hr'
+alias ccm="claude-monitor --plan pro --timezone Asia/Tokyo"
 
 function nvim() {
   export XDG_CACHE_HOME=/tmp/nvim/cache

@@ -5,6 +5,7 @@ alias py='python3'
 alias b='btm -b'
 alias size='du -sh ./*'
 alias ssize='du -sh ./* | sort -hr'
+alias ccm="claude-monitor --plan pro --timezone Asia/Tokyo"
 
 function y() {
 	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
@@ -30,6 +31,7 @@ svgcat() {
 }
 
 alias t="tmux new-session -A -s default"
+
 
 # windows
 # alias start='wsl-open'
