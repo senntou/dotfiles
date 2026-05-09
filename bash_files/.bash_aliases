@@ -1,3 +1,5 @@
+PROMPT_DIRTRIM=3
+
 alias lg='lazygit'
 alias l='ls -l'
 alias n='nvim'

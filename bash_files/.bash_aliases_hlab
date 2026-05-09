@@ -1,3 +1,5 @@
+PROMPT_DIRTRIM=3
+
 alias lg='lazygit'
 alias l='ls -l'
 alias yi='env "YAZI_CONFIG_HOME=~/.config/yazi-img" yazi'
@@ -8,6 +10,8 @@ alias mpt='conda activate mpt'
 alias size='du -sh ./*'
 alias ssize='du -sh ./* | sort -hr'
 alias ccm="claude-monitor --plan pro --timezone Asia/Tokyo"
+
+alias mpt-init='ln -s ~/envs/mpt .venv'
 
 function nvim() {
   export XDG_CACHE_HOME=/tmp/nvim/cache

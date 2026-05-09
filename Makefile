@@ -36,6 +36,13 @@ yazi: config-setup
 	cp -i files/yazi-img.toml ~/.config/yazi-img/yazi.toml
 	yazi --clear-cache
 
+yazi-old: config-setup
+	mkdir -p ~/.config/yazi
+	mkdir -p ~/.config/yazi-img
+	cp -i files/yazi-old.toml ~/.config/yazi/yazi.toml
+	cp -i files/yazi-img-old.toml ~/.config/yazi-img/yazi.toml
+	yazi --clear-cache
+
 latexmk:
 	cp -i files/.latexmkrc ~/.latexmkrc
 

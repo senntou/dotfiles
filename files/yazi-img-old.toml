@@ -21,13 +21,13 @@ svgcat = [
 
 [open]
 prepend_rules = [
-	{ url = "*.png", use = "imgcat" },
-	{ url = "*.jpg", use = "imgcat" },
-  { url = "*.jpeg", use = "imgcat" },
-  { url = "*.gif", use = "imgcat" },
-  { url = "*.webp", use = "imgcat" },
-  { url = "*.svg", use = "svgcat" },
-  { url = "*.pdf", use = "imgcat" },
-  { url = "*.tif", use = "imgcat" },
-  { url = "*.tiff", use = "imgcat" },
+	{ name = "*.png", use = "imgcat" },
+	{ name = "*.jpg", use = "imgcat" },
+  { name = "*.jpeg", use = "imgcat" },
+  { name = "*.gif", use = "imgcat" },
+  { name = "*.webp", use = "imgcat" },
+  { name = "*.svg", use = "svgcat" },
+  { name = "*.pdf", use = "imgcat" },
+  { name = "*.tif", use = "imgcat" },
+  { name = "*.tiff", use = "imgcat" },
 ]
