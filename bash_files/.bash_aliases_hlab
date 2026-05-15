@@ -10,6 +10,7 @@ alias mpt='conda activate mpt'
 alias size='du -sh ./*'
 alias ssize='du -sh ./* | sort -hr'
 alias ccm="claude-monitor --plan pro --timezone Asia/Tokyo"
+alias start="ssh-open"
 
 alias mpt-init='ln -s ~/envs/mpt .venv'
 
