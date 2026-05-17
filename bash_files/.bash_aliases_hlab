@@ -14,13 +14,6 @@ alias start="ssh-open"
 
 alias mpt-init='ln -s ~/envs/mpt .venv'
 
-function nvim() {
-  export XDG_CACHE_HOME=/tmp/nvim/cache
-  export XDG_DATA_HOME=/tmp/nvim/data
-  mkdir -p $XDG_CACHE_HOME $XDG_DATA_HOME
-  command nvim "$@"
-}
-
 alias n='nvim'
 alias nvim-yazi='NVIM_APPNAME=nvim-yazi nvim'
 
