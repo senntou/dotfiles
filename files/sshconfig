@@ -1,0 +1,8 @@
+Host hoge
+    HostName hoge.iu.nitech.ac.jp
+    User username
+    Port 4501
+    IdentityFile ~/.ssh/id_ed25519
+    Compression yes
+    LocalForward 18766 localhost:18766
+    LogLevel QUIET

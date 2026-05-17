@@ -25,6 +25,11 @@ bash_aliases_hlab:
 gitconfig:
 	cp -i files/.gitconfig ~/.gitconfig
 
+sshconfig:
+	# cp -i files/ssh_config ~/.ssh/config
+	@echo "Please copy files/ssh_config to ~/.ssh/config and adjust it according to your needs."
+	@echo "Because of security reasons, I won't copy the ssh_config file directly."
+
 tmux:
 	mkdir -p ~/.config/tmux
 	cp -i files/tmux.conf ~/.config/tmux/tmux.conf
