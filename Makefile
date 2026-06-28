@@ -55,3 +55,6 @@ latexindent:
 	@echo "please copy files/defaultSettings.latexindent.yaml to the following location:"
 	@bash -c 'latexindent -vv'
 
+claude:
+	cp -i statusline-command.sh ~/.claude/
+	# cp -i settings.json ~/.claude/
