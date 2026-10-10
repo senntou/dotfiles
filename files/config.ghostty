@@ -1,0 +1,25 @@
+# フォント
+font-family = HackGen Console NF
+font-size = 13
+
+# 背景透過
+background-opacity = 0.92
+
+# タイトルバーを非表示
+window-decoration = false
+
+# キーバインド: Ctrl+V でクリップボードからペースト
+keybind = ctrl+v=paste_from_clipboard
+
+# フォントサイズ変更
+keybind = f12=increase_font_size:1
+keybind = f11=decrease_font_size:1
+
+theme = Monokai Classic
+
+# クリップボードの通知・確認を無効化
+clipboard-read = allow
+clipboard-write = allow
+
+term = xterm-256color
+

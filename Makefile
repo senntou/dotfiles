@@ -58,3 +58,6 @@ latexindent:
 claude:
 	cp -i claude/statusline-command.sh ~/.claude/
 	# cp -i settings.json ~/.claude/
+	
+ghostty:
+	cp -i files/config.ghostty ~/.config/ghostty/config.ghostty
