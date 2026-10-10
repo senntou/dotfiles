@@ -56,5 +56,5 @@ latexindent:
 	@bash -c 'latexindent -vv'
 
 claude:
-	cp -i statusline-command.sh ~/.claude/
+	cp -i claude/statusline-command.sh ~/.claude/
 	# cp -i settings.json ~/.claude/
