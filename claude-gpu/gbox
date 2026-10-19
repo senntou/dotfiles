@@ -1,0 +1,117 @@
+#!/usr/bin/env bash
+# GPU付き apptainer コンテナの中でコマンドを実行する。claude はコンテナ内では標準sandboxオフで動く。
+#
+# 起動できるのは ALLOWED_ROOTS の配下だけ。ホスト側で書き込めるのはカレントディレクトリだけ（その .claude は除く）。ほかに見えるのは下記 DEFAULT_RO などの
+# 読み取り専用マウントのみで、マウントを増やすオプションはあえて用意していない
+# （ホスト側の claude に gbox を allow しても、見える範囲を広げられないように）。
+# イメージ自体は読み取り専用、コンテナ内の $HOME と /tmp は終了時に消える。
+#
+# 使い方:
+#   gbox claude [claude の引数...]   コンテナ内で Claude Code を起動
+#   gbox COMMAND [引数...]           コンテナ内で任意のコマンドを実行（例: gbox python train.py）
+#   gbox                             コンテナ内で bash を起動
+#   gbox --import-memory             ホストの ~/.claude の、このディレクトリ用 memory をコンテナ側へコピー（上書きしない）
+#
+# CUDA_VISIBLE_DEVICES はコンテナ内へ引き継ぐ（例: CUDA_VISIBLE_DEVICES=1 gbox python train.py）。
+set -euo pipefail
+
+DATA_DIR="$HOME/.local/share/claude-gpu"
+SIF="$DATA_DIR/claude-gpu.sif"
+CLAUDE_HOME="$DATA_DIR/home"   # コンテナ内の ~/.claude（ホストの ~/.claude とは別）
+DOTFILES=$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd -P)
+
+# 既定で読み取り専用マウントするパス（存在しないものは飛ばす）
+DEFAULT_RO=("$HOME/envs" /mark/wkanegae/workspace /Dataset /Raw /mnt/ssd)
+
+# 起動できるディレクトリ（それ自身とその配下）。カレントは読み書き可能でマウントするので、ここ以外では起動させない
+ALLOWED_ROOTS=("$HOME/temp" /mark/wkanegae/workspace)
+
+die() { echo "gbox: $*" >&2; exit 1; }
+
+check_workdir() {
+    local p root
+    p=$(readlink -f "$1") && [ -e "$p" ] || die "パスが見つかりません: $1"
+    for root in "${ALLOWED_ROOTS[@]}"; do
+        root=$(readlink -m "$root")
+        case "$p" in
+            "$root" | "$root"/*) printf '%s\n' "$p"; return ;;
+        esac
+    done
+    die "$p では起動できません（起動できるのは ${ALLOWED_ROOTS[*]} の配下だけ）"
+}
+
+WORKDIR=$(check_workdir "$PWD")
+
+mkdir -p "$CLAUDE_HOME"
+
+if [ "${1:-}" = --import-memory ]; then
+    # Claude Code のプロジェクトキー: パスの英数字以外を '-' に置換
+    key=$(printf '%s' "$WORKDIR" | sed 's/[^A-Za-z0-9]/-/g')
+    src="$HOME/.claude/projects/$key/memory"
+    dst="$CLAUDE_HOME/projects/$key/memory"
+    [ -d "$src" ] || die "ホスト側に memory がありません: $src"
+    mkdir -p "$dst"
+    cp -rv --update=none "$src/." "$dst/"
+    exit 0
+fi
+
+command -v apptainer >/dev/null || die "apptainer が見つかりません"
+[ -f "$SIF" ] || die "$SIF がありません。$DOTFILES で 'make claude-gpu' を実行してください"
+
+# マウント一覧: "コンテナ内パス<TAB>ホスト側パス<TAB>ro|rw<TAB>説明"
+mounts=()
+add_mount() { mounts+=("$1"$'\t'"$2"$'\t'"$3"$'\t'"$4"); }
+add_mount "$WORKDIR" "$WORKDIR" rw "カレントディレクトリ"
+# カレントの .claude（ホスト側 claude のプロジェクト設定や hooks）はコンテナから書き換えさせない
+mkdir -p "$WORKDIR/.claude"
+add_mount "$WORKDIR/.claude" "$WORKDIR/.claude" ro "プロジェクトの Claude Code 設定（ホスト側と共有）"
+add_mount "$HOME/.claude" "$CLAUDE_HOME" rw "このコンテナ専用の Claude Code 設定（ホストの ~/.claude とは別物）"
+# uv が入れた Python 本体はホストと同じパスで見せる（venv がどちらでも動く）。キャッシュはコンテナ内の一時領域
+[ -d "$HOME/.local/share/uv/python" ] &&
+    add_mount "$HOME/.local/share/uv/python" "$HOME/.local/share/uv/python" ro "uv が入れた Python 本体（ホストと共有）"
+[ -f "$HOME/.gitconfig" ] && add_mount "$HOME/.gitconfig" "$HOME/.gitconfig" ro "git の設定"
+# 同じパスが複数あるときは先に足したものを使う（カレント > 既定）
+for p in "${DEFAULT_RO[@]}"; do
+    [ -e "$p" ] || { echo "gbox: $p がないのでマウントしません" >&2; continue; }
+    add_mount "$(readlink -f "$p")" "$(readlink -f "$p")" ro ""
+done
+
+# 親を先にマウントする（/mark/wkanegae/workspace を ro にしても、その下のカレントは rw で上書きされる）
+binds=()
+prompt_mounts=""
+while IFS=$'\t' read -r dst src rw note; do
+    if [ "$rw" = ro ]; then binds+=(--bind "$src:$dst:ro"); else binds+=(--bind "$src:$dst"); fi
+    prompt_mounts+="- $dst（$([ "$rw" = ro ] && echo 読み取り専用 || echo 読み書き可能)）${note:+ … $note}"$'\n'
+done < <(printf '%s\n' "${mounts[@]}" | awk -F'\t' '!seen[$1]++ { d = $1; print gsub("/", "", d) "\t" $0 }' | sort -n -s -k1,1 | cut -f2-)
+
+SYSTEM_PROMPT="# 実行環境: gbox（apptainer コンテナ）
+あなたは GPU 付きの apptainer コンテナの中で動いている。Claude Code の sandbox はオフ。
+
+ホストと共有しているパス（ここへの変更はホストに残る。読み取り専用のものは変更できない）:
+${prompt_mounts}
+それ以外:
+- \$HOME（$HOME）と /tmp はコンテナ内だけの一時領域。書き込めるが終了すると消え、ホストには残らない。
+  上の一覧にない場所に作ったファイルは消えるので、残したいものは必ずカレントディレクトリに置くこと。
+- OS（/usr など）は読み取り専用。apt install はできない。Python のパッケージは uv で入れる。
+  uv のキャッシュはコンテナ内の一時領域、uv の Python 本体は読み取り専用なので、新しい Python のインストールはできない。
+- 上の一覧にないホストのファイル（~/.ssh など）は見えない。見えないのは仕様なので、回避しようとしないこと。
+  必要なファイルがあれば、ユーザーにカレントディレクトリへ置いてもらうよう頼むこと。"
+
+[ -n "${CUDA_VISIBLE_DEVICES:-}" ] && export APPTAINERENV_CUDA_VISIBLE_DEVICES="$CUDA_VISIBLE_DEVICES"
+
+args=(
+    --containall            # $HOME・/tmp・/dev などホストのものを使わない、PID/IPC も分離
+    --cleanenv              # ホストの環境変数を持ち込まない（APPTAINERENV_* は除く）
+    --nv
+    --pwd "$WORKDIR"
+    --env "TERM=${TERM:-xterm-256color},COLORTERM=${COLORTERM:-},TZ=${TZ:-Asia/Tokyo}"
+    "${binds[@]}"
+)
+
+[ $# -gt 0 ] || set -- bash
+if [ "$1" = claude ]; then
+    shift
+    exec apptainer exec "${args[@]}" "$SIF" \
+        claude --settings /etc/claude-gpu/settings.json --append-system-prompt "$SYSTEM_PROMPT" "$@"
+fi
+exec apptainer exec "${args[@]}" "$SIF" "$@"

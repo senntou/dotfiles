@@ -58,6 +58,15 @@ latexindent:
 claude:
 	cp -i claude/statusline-command.sh ~/.claude/
 	# cp -i settings.json ~/.claude/
-	
+
 ghostty:
 	cp -i files/config.ghostty ~/.config/ghostty/config.ghostty
+
+CLAUDE_GPU_SIF := $(HOME)/.local/share/claude-gpu/claude-gpu.sif
+
+claude-gpu:
+	mkdir -p $(dir $(CLAUDE_GPU_SIF)) ~/.local/bin
+	cd claude-gpu && apptainer build --fakeroot --force $(CLAUDE_GPU_SIF) claude-gpu.def
+	ln -sf $(CURDIR)/claude-gpu/gbox ~/.local/bin/gbox
+
+.PHONY: claude-gpu

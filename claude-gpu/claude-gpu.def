@@ -1,0 +1,41 @@
+# GPU付きで Claude Code を動かすための apptainer イメージ。
+# ビルドは `make claude-gpu`（~/.local/share/claude-gpu/claude-gpu.sif ができる）。
+# PyTorch などはイメージに入れず、各プロジェクトで `uv add torch` する。
+Bootstrap: docker
+From: nvidia/cuda:12.8.1-cudnn-devel-ubuntu24.04
+
+%files
+    settings.json /etc/claude-gpu/settings.json
+
+%post
+    set -eu
+    export DEBIAN_FRONTEND=noninteractive
+    # --fakeroot（subuid なし）では apt が _apt ユーザーに切り替えられないため
+    echo 'APT::Sandbox::User "root";' > /etc/apt/apt.conf.d/99-no-sandbox
+
+    apt-get update
+    apt-get install -y --no-install-recommends \
+        ca-certificates curl git less jq ripgrep fd-find procps tzdata \
+        unzip zip vim-tiny openssh-client build-essential pkg-config \
+        libgl1 libglib2.0-0 libxcb1
+
+    rm -rf /var/lib/apt/lists/*
+
+    curl -LsSf https://astral.sh/uv/install.sh \
+        | env UV_INSTALL_DIR=/usr/local/bin UV_NO_MODIFY_PATH=1 sh
+
+    # 公式インストーラは $HOME 配下に入れるので、一時 HOME に入れて実体だけ取り出す
+    export HOME=/tmp/claude-install
+    curl -fsSL https://claude.ai/install.sh | bash
+    install -m 755 "$(readlink -f "$HOME/.local/bin/claude")" /usr/local/bin/claude
+    rm -rf "$HOME"
+
+    chmod -R a+rX /etc/claude-gpu
+
+%environment
+    export LANG=C.UTF-8
+    export CLAUDE_CONFIG_DIR="$HOME/.claude"
+    # イメージは読み取り専用なので自動更新はできない（make claude-gpu で入れ直す）
+    export DISABLE_AUTOUPDATER=1
+    # キャッシュと venv が別マウントなのでハードリンクできない
+    export UV_LINK_MODE=copy
