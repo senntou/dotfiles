@@ -21,10 +21,10 @@ CLAUDE_HOME="$DATA_DIR/home"   # コンテナ内の ~/.claude（ホストの ~/.
 DOTFILES=$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd -P)
 
 # 既定で読み取り専用マウントするパス（存在しないものは飛ばす）
-DEFAULT_RO=("$HOME/envs" /mark/wkanegae/workspace /Dataset /Raw /mnt/ssd)
+DEFAULT_RO=("$HOME/envs" /mark/wkanegae/workspace /home/wkanegae/workspace /Dataset /Raw /mnt/ssd)
 
 # 起動できるディレクトリ（それ自身とその配下）。カレントは読み書き可能でマウントするので、ここ以外では起動させない
-ALLOWED_ROOTS=("$HOME/temp" /mark/wkanegae/workspace)
+ALLOWED_ROOTS=("$HOME/temp" /mark/wkanegae/workspace /home/wkanegae/workspace)
 
 die() { echo "gbox: $*" >&2; exit 1; }
 
